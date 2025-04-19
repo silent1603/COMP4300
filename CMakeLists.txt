@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.28)
-project(CMakeSFMLProject LANGUAGES CXX)
+project(COMP4300 LANGUAGES CXX)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
@@ -12,6 +12,11 @@ FetchContent_Declare(SFML
     SYSTEM)
 FetchContent_MakeAvailable(SFML)
 
-add_executable(main src/main.cpp)
-target_compile_features(main PRIVATE cxx_std_17)
-target_link_libraries(main PRIVATE SFML::Graphics)
+file(GLOB_RECURSE CPP_SOURCES ${CMAKE_SOURCE_DIR}/src/*.cpp)
+file(GLOB_RECURSE HEADER_SOURCES ${CMAKE_SOURCE_DIR}/src/*.h)
+add_executable(game)
+source_group(TREE "${CMAKE_SOURCE_DIR}" PREFIX "" FILES ${CPP_SOURCES} ${HEADER_SOURCES})
+target_sources(game PUBLIC ${CPP_SOURCES} ${HEADER_SOURCES})
+target_include_directories(game PUBLIC ${CMAKE_SOURCE_DIR}/src)
+target_compile_features(game PRIVATE cxx_std_17)
+target_link_libraries(game PRIVATE SFML::Graphics SFML::System SFML::Window SFML::Network SFML::Audio SFML::Main)
