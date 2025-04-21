@@ -6,37 +6,71 @@
 #include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
 
-int main() {
-    sf::RenderWindow window(sf::VideoMode({640, 480}), "ImGui + SFML = <3");
-    window.setFramerateLimit(60);
-    ImGui::SFML::Init(window);
+struct AppInitData
+{
+    sf::RenderWindow window;
+    sf::Clock deltaClock;
+};
 
-    sf::CircleShape shape(100.f);
+AppInitData appData;
+sf::CircleShape shape(100.f);
+
+void inline init()
+{
+    appData.window.create(sf::VideoMode({ 800,600 }), "Game");
+    appData.window.setFramerateLimit(60);
+    appData.window.setVerticalSyncEnabled(true);
+    ImGui::SFML::Init(appData.window);
     shape.setFillColor(sf::Color::Green);
 
-    sf::Clock deltaClock;
-    while (window.isOpen()) {
-        while (const auto event = window.pollEvent()) {
-            ImGui::SFML::ProcessEvent(window, *event);
+}
 
-            if (event->is<sf::Event::Closed>()) {
-                window.close();
-            }
+void inline processInput()
+{
+    while (const auto event = appData.window.pollEvent()) {
+        ImGui::SFML::ProcessEvent(appData.window, *event);
+
+        if (event->is<sf::Event::Closed>()) {
+            appData.window.close();
         }
-
-        ImGui::SFML::Update(window, deltaClock.restart());
-
-        ImGui::ShowDemoWindow();
-
-        ImGui::Begin("Hello, world!");
-        ImGui::Button("Look at this pretty button");
-        ImGui::End();
-
-        window.clear();
-        window.draw(shape);
-        ImGui::SFML::Render(window);
-        window.display();
     }
 
+}
+
+void inline ImGuiUpdate()
+{
+    ImGui::SFML::Update(appData.window, appData.deltaClock.restart());
+
+}
+
+void inline update()
+{
+    ImGuiUpdate();
+}
+
+
+
+void inline render()
+{
+    appData.window.clear();
+    appData.window.draw(shape);
+    ImGui::SFML::Render(appData.window);
+    appData.window.display();
+}
+
+
+void inline close()
+{
     ImGui::SFML::Shutdown();
+}
+int main() {
+
+    init();
+    while (appData.window.isOpen()) {
+        processInput();
+        update();
+        render();
+    }
+    close();
+
 }
