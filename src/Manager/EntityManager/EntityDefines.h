@@ -4,7 +4,7 @@
 #include <vector>
 #include <memory>
 #include <string>
-#include "OOP_Entity.h"
+#include "Manager/EntityManager/Entity/OOP_Entity.h"
 template<typename Type>
 using EntityVec =  std::vector<std::shared_ptr<OOP_Entity<Type>>>;
 
