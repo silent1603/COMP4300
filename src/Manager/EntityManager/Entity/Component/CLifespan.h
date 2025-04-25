@@ -1,8 +1,14 @@
 #ifndef CLIFESPAN_H
 #define CLIFESPAN_H
 #include "Math/Vector.h"
-struct CLifespan
+#include "Component.h"
+
+class CLifespan : public Component
 {
-    Vector<int, 2> data;
+public:
+    int totalLifespan = 0;
+    int remainingLifespan = 0;
+    CLifespan() {}
+    CLifespan(int totalLifespan) : totalLifespan(totalLifespan),remainingLifespan(totalLifespan) {}
 };
 #endif

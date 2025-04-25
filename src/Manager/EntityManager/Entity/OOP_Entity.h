@@ -2,81 +2,68 @@
 #define OOP_ENTITY_H
 #include <tuple>
 #include <string>
-//using ComponentTuple = std::tuple<CTransform,CLifeSpan,CInput,CBoundingBox,CAnimation,CGravity,CState>
+#include "Manager/EntityManager/Entity/Component/CCollision.h"
+#include "Manager/EntityManager/Entity/Component/CInput.h"
+#include "Manager/EntityManager/Entity/Component/CLifespan.h"
+#include "Manager/EntityManager/Entity/Component/CScore.h"
+#include "Manager/EntityManager/Entity/Component/CTransform.h"
+#include "Manager/EntityManager/Entity/Component/CShape.h"
+using ComponentTuple = std::tuple<CTransform,CLifespan,CInput>;
 
-template<typename Type>
+template <typename T, typename Tuple>
+struct has_type;
+
 class OOP_Entity
 {
 private:
-   //ComponentTuple m_components;
+   
+   ComponentTuple m_components;
    bool m_alive = true;
    std::string m_tag = "default";
    size_t m_id = 0;
-   Type         data;
 public:
-    OOP_Entity(/* args */);
+    OOP_Entity();
+    OOP_Entity(const size_t id, const std::string& tag);
     ~OOP_Entity();
-    void                      Add(Type component);
+    template<typename Type,typename... TArgs>
+    void                      Add(TArgs&&... mArgs);
+    template<typename Type>
     Type&                     Get();
+    template<typename Type>
+    bool                      Has();
+    template<typename Type>
+    bool                      Remove();
     size_t                    Id() const;
     bool                      IsAlive() const;
     void                      Destroy() const;
     const std::string&        Tag() const;
 };
 
-
-template <typename Type> 
-void OOP_Entity<Type>::Add(Type component)
+template<typename Type,typename... TArgs>
+void OOP_Entity::Add(TArgs&&... mArgs)
 {
-
+    Type& component = get<T>();
+    component = T(std::forward<TArgs>(mArgs)..);
+    component.exists = true;
+    return component;
 }
 
 template <typename Type> 
-Type& OOP_Entity<Type>::Get()
+Type& OOP_Entity::Get()
 {
-    return this->data;
+    return std::get<T>(m_components);
 }
 
 template <typename Type> 
-Type& OOP_Entity<Type>::Get()
+bool OOP_Entity::Has()
 {
-    return this->data;
+    return std::get<T>().exists;
 }
 
-
-template <typename Type> 
-size_t OOP_Entity<Type>::Id() const
+template <typename Type>
+bool OOP_Entity::Remove()
 {
-    return this->id;
+    return std::get<T>() = T();
 }
-
-template <typename Type> 
-bool OOP_Entity<Type>::IsAlive() const
-{
-    return this->m_alive
-}
-
-template <typename Type> 
-void OOP_Entity<Type>::Destroy() const
-{
-    
-}
-
-template <typename Type> 
-const std::string& OOP_Entity<Type>::Tag() const
-{
-    return this->;
-}
-
-template <typename Type> 
-OOP_Entity<Type>::OOP_Entity(/* args */)
-{
-}
-
-template <typename Type> 
-OOP_Entity<Type>::~OOP_Entity()
-{
-}
-
 
 #endif

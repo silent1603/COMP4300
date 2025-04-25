@@ -1,7 +1,12 @@
-#ifndef CSCORE_H
+﻿#ifndef CSCORE_H
 #define CSCORE_H
-struct CScore
+#include "Component.h"
+class CScore : public Component
 {
+public:
     int score;
+
+    CScore() {};
+    CScore(int s) :score(s) {}
 };
 #endif

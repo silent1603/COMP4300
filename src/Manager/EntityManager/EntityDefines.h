@@ -5,9 +5,6 @@
 #include <memory>
 #include <string>
 #include "Manager/EntityManager/Entity/OOP_Entity.h"
-template<typename Type>
-using EntityVec =  std::vector<std::shared_ptr<OOP_Entity<Type>>>;
-
-template<typename Type>
-using EntityMap =  std::map<std::string,EntityVec<Type>>;
+using EntityVec =  std::vector<std::shared_ptr<OOP_Entity>>;
+using EntityMap =  std::map<std::string,EntityVec>;
 #endif

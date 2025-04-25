@@ -1,8 +1,21 @@
 #ifndef CINPUT_H
 #define CINPUT_H
 #include "Math/Vector.h"
-struct CInput
+#include "Component.h"
+class CInput : public Component
 {
-	Vector<int, 7> inputs;
+	enum class InputType : int
+	{
+		NONE = 0,
+		UP,
+		LEFT,
+		RIGHT,
+		DOWN,
+		SHOOT,
+		SIZE
+	};
+public:
+	Vector<int, (int)(InputType::SIZE)> inputs; 
+	CInput(){ }
 };
 #endif

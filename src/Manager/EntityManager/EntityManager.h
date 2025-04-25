@@ -1,20 +1,21 @@
 #ifndef ENTITYMANAGER_H
 #define ENTITYMANAGER_H
 #include "EntityDefines.h"
-#include "OOP_Entity.h"
+#include "Manager/EntityManager/Entity/OOP_Entity.h"
 class EntityManager
 {
 private:
-    EntityVec<int> m_entites;
-    EntityMap<int> m_entityMap;
+    EntityVec m_entites;
+    EntityMap m_entityMap;
+    EntityVec m_toAdd;
     size_t m_totalEntities = 0;
-    EntityVec<int> m_toAdd;
 public:
     EntityManager();
     void Update();
-    std::shared_ptr<OOP_Entity<int>> AddEntity(const std::string& tag);
-    EntityVec<int>& GetEntities();
-    EntityVec<int>& GetEntities(const std::string& tag);
+    std::shared_ptr<OOP_Entity> AddEntity(const std::string& tag);
+    void RemoveDeadEntities(EntityVec& vec);
+    EntityVec& GetEntities();
+    EntityVec& GetEntities(const std::string& tag);
 };
 
 #endif
