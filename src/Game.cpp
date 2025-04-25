@@ -20,24 +20,17 @@ void Game::Init(const std::string& path)
 std::shared_ptr<OOP_Entity> Game::Player()
 {
     auto& players = m_entities.GetEntities("player");
-    return players.front();
+
+    return players.size() > 0 ? players.front() : nullptr ;
 }
 
 void Game::run()
 {
     while (m_running)
     {
-        m_entities.Update();
-        ImGui::SFML::Update(m_window,m_deltaClock.restart());
-        SEnemySpawnser();
-        SMovement();
-        SCollision();
-        SUserInput();
-        SGUI();
-        SRender();
-
-        m_currentFrame++;
+        Update();
     }
+    Close();
 }
 
 void Game::SpawnEnemy()
@@ -48,8 +41,8 @@ void Game::SpawnEnemy()
 void Game::SpawnPlayer()
 {
     auto entity = m_entities.AddEntity("player");
-    entity->Add<CTransform>({200.f,200.f},{200.f,200.f},0.0f);
-    entity->Add<CShape>(32.0f,8,sf::Color(10,10,10),sf::Color(255,0,0),4.0f);
+    entity->Add<CTransform>(Vector<float,2>{200.f,200.f}, Vector<float, 2>{200.f,200.f},0.0f);
+    entity->Add<CShape>(32.0f,8,sf::Color(10,10,10),sf::Color(255,0,0),4.0f,Vector<float,2>{0.0f,0.0f});
     entity->Add<CInput>();
 }
 
@@ -69,9 +62,13 @@ void  Game::SpawnSpecialWeapon(std::shared_ptr<OOP_Entity> entity)
 
 void  Game::SMovement()
 {
-    auto& transform = Player()->Get<CTransform>();
-    transform.pos.data[0] += transform.velocity.data[0];
-    transform.pos.data[1] += transform.velocity.data[1];
+    std::shared_ptr<OOP_Entity> player = Player();
+    if (player)
+    {
+        auto& transform = player->Get<CTransform>();
+        transform.pos.data[0] += transform.velocity.data[0];
+        transform.pos.data[1] += transform.velocity.data[1];
+    }
 }
 
 void Game::SLifepan()
@@ -97,19 +94,84 @@ void Game::SGUI()
 
 void Game::SRender()
 {
-
+    m_window.clear();
+    std::shared_ptr<OOP_Entity> player = Player();
+    if (player)
+    {
+        Player()->Get<CShape>().circle.setPosition({ Player()->Get<CTransform>().pos[0],Player()->Get<CTransform>().pos[1] });
+        Player()->Get<CTransform>().angle += 1.0f;
+        Player()->Get<CShape>().circle.setRotation(sf::degrees({ Player()->Get<CTransform>().angle }));
+        m_window.draw(Player()->Get<CShape>().circle);
+    }
+    ImGui::SFML::Render(m_window);
+    m_window.display();
 }
 void Game::SUserInput()
 {
+    while (const auto event = m_window.pollEvent()) {
+        ImGui::SFML::ProcessEvent(m_window, *event);
+
+        if (event->is<sf::Event::Closed>()) {
+            m_running = false;
+        }
+
+        if (event->is<sf::Event::KeyReleased>())
+        {
+            const auto* keyPressed = event->getIf<sf::Event::KeyReleased>();
+            switch (keyPressed->code)
+            {
+            case sf::Keyboard::Key::W:
+            default:
+                break;
+            }
+        }
+        if (event->is<sf::Event::KeyPressed>())
+        {
+            const auto* keyPressed = event->getIf<sf::Event::KeyPressed>();
+            switch (keyPressed->code)
+            {
+            case sf::Keyboard::Key::W:
+            default:
+                break;
+            }
+        }
+
+        if (event->is<sf::Event::MouseButtonPressed>())
+        {
+            if (ImGui::GetIO().WantCaptureMouse)
+            {
+                continue;
+            }
+            const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>();
+            if (mouseButtonPressed->button == sf::Mouse::Button::Left)
+            {
+                //call spawnwBullet here
+            }
+
+            if (mouseButtonPressed->button ==  sf::Mouse::Button::Right)
+            {
+                //call spawnwSpecialWeapon here
+            }
+        }
+    }
 
 }
 
 void Game::Update()
 {
-    //entites update
-    //UserInput
-    //Movement
-    //collision
-    //render
-    //frame++
+    m_entities.Update();
+    ImGui::SFML::Update(m_window, m_deltaClock.restart());
+    SEnemySpawnser();
+    SMovement();
+    SCollision();
+    SUserInput();
+    SGUI();
+    SRender();
+
+    m_currentFrame++;
+}
+
+void Game::Close()
+{
+    ImGui::SFML::Shutdown();
 }

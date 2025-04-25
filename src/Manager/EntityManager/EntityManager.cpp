@@ -1,5 +1,8 @@
 #include "EntityManager.h"
+EntityManager::EntityManager()
+{
 
+}
 
 std::shared_ptr<OOP_Entity> EntityManager::AddEntity(const std::string& tag)
 {

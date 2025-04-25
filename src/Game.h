@@ -16,6 +16,9 @@ private:
     sf::Font    m_font;
     sf::Text    m_text;
     sf::Clock   m_deltaClock;
+    PlayerConfig m_playerConfig;
+    EnemyConfig m_enemyConfig;
+    BulletConfig m_bulletConfig;
     int         m_score = 0;
     int         m_currentFrame = 0;
     int         m_lastEnemySpawnTime = 0;
@@ -40,7 +43,7 @@ private:
     void SpawnSpecialWeapon(std::shared_ptr<OOP_Entity> entity);
 
     void Update();
-
+    void Close();
     std::shared_ptr<OOP_Entity> Player();
 public:
     Game(const std::string& config);

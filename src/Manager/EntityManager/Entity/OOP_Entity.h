@@ -8,7 +8,7 @@
 #include "Manager/EntityManager/Entity/Component/CScore.h"
 #include "Manager/EntityManager/Entity/Component/CTransform.h"
 #include "Manager/EntityManager/Entity/Component/CShape.h"
-using ComponentTuple = std::tuple<CTransform,CLifespan,CInput>;
+using ComponentTuple = std::tuple<CTransform,CLifespan,CInput,CScore,CCollision,CShape>;
 
 template <typename T, typename Tuple>
 struct has_type;
@@ -26,7 +26,7 @@ public:
     OOP_Entity(const size_t id, const std::string& tag);
     ~OOP_Entity();
     template<typename Type,typename... TArgs>
-    void                      Add(TArgs&&... mArgs);
+    Type&                      Add(TArgs&&... mArgs);
     template<typename Type>
     Type&                     Get();
     template<typename Type>
@@ -40,10 +40,10 @@ public:
 };
 
 template<typename Type,typename... TArgs>
-void OOP_Entity::Add(TArgs&&... mArgs)
+Type& OOP_Entity::Add(TArgs&&... mArgs)
 {
-    Type& component = get<T>();
-    component = T(std::forward<TArgs>(mArgs)..);
+    auto& component = Get<Type>();
+    component = Type(std::forward<TArgs>(mArgs)...);
     component.exists = true;
     return component;
 }
@@ -51,19 +51,19 @@ void OOP_Entity::Add(TArgs&&... mArgs)
 template <typename Type> 
 Type& OOP_Entity::Get()
 {
-    return std::get<T>(m_components);
+    return std::get<Type>(m_components);
 }
 
 template <typename Type> 
 bool OOP_Entity::Has()
 {
-    return std::get<T>().exists;
+    return std::get<Type>().exists;
 }
 
 template <typename Type>
 bool OOP_Entity::Remove()
 {
-    return std::get<T>() = T();
+    return std::get<Type>() = Type();
 }
 
 #endif
